@@ -234,7 +234,7 @@ public:
             atexit( destroy );
             m_isDestroyed = false;
         }
-        else if( m_pModuleManager == nullptr )
+        else if( !m_pModuleManager )
         {
             static QModuleManager moduleManager;
             m_pModuleManager = &moduleManager;
@@ -246,11 +246,8 @@ public:
 private:
     static void destroy()
     {
-        if( m_pModuleManager != nullptr )
-        {
+        if( !m_pModuleManager )
             m_pModuleManager->~QModuleManager();
-            m_pModuleManager = nullptr;
-        }
     }
 
     void printError(int nModuleId, std::string errorMessage );
