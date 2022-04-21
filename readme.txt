@@ -1,5 +1,3 @@
-# commonLibs
-
 # 환경변수에 commonLibs의 경로를 commonLibs의 이름으로 등록 해 주어야 함.
 # makelist나 .pro 파일 등에서 COMMON_LIBS를 선언하여 사용 할 모듈을 지정해주어야 함
 
