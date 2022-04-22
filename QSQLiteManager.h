@@ -19,6 +19,8 @@ public:
     void setDBInfo( const QString& path );
     void setDBInfo(const QString& path, const QString& pass );
 
+    QString getDBName();
+
     bool checkRevision();
 
     bool getConnection(QSqlDatabase &db, const QString& connectionName = "" );

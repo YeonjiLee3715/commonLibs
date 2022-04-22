@@ -36,6 +36,9 @@ public:
     void setIsSet( bool isSet );
     bool IsSet();
 
+    void setCancelEvent( bool bCancelEvent );
+    bool CancelEvent();
+
     void setStop( bool isStop );
     bool IsStop();
 
@@ -63,6 +66,7 @@ public slots:
 
 private:
     bool m_isSet;
+    bool m_bCancelEvent;
     bool m_isStop;
 
     bool m_isIndependentModule;

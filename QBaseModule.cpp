@@ -31,6 +31,16 @@ bool QBaseModule::IsSet()
     return m_isSet;
 }
 
+void QBaseModule::setCancelEvent(bool bCancelEvent)
+{
+    m_bCancelEvent = bCancelEvent;
+}
+
+bool QBaseModule::CancelEvent()
+{
+    return m_bCancelEvent;
+}
+
 void QBaseModule::setStop(bool isStop)
 {
     m_isStop = isStop;
@@ -86,6 +96,13 @@ void QBaseModule::getRequest(int reqCode, int sender, bool response, QVariantMap
 {
     if( IsSet() == false || IsStop() )
         return;
+
+    if( CancelEvent() )
+    {
+        LOGI( TAG, "Event - reqCode: %d, sender: %d has been canceled.", reqCode, sender );
+
+        return;
+    }
 
     QString functionName = getFunctionNameFromReqCode( reqCode );
     if( functionName.isEmpty() )

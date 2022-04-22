@@ -79,6 +79,11 @@ void QSQLiteManager::setDBInfo(const QString &path, const QString &pass)
     m_isPassword = true;
 }
 
+QString QSQLiteManager::getDBName()
+{
+    return m_strDBName;
+}
+
 bool QSQLiteManager::openDB( QSqlDatabase& db )
 {
     db.setDatabaseName( m_strDBName );

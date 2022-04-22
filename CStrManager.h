@@ -2,8 +2,8 @@
 // Created by 이연지 on 2017-05-31.
 //
 
-#ifndef AROUNDVIEW_CSTRMANAGER_H
-#define AROUNDVIEW_CSTRMANAGER_H
+#ifndef CSTRMANAGER_H
+#define CSTRMANAGER_H
 
 #include "commonLibsDef.h"
 
@@ -232,7 +232,7 @@ namespace nsCmn
         size_t lenSrc = detail::measure( pSrc );
         size_t lenKeyword = detail::measure( keyword );
 
-        return detail::findFirstOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive  );
+        return detail::findFirstOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive );
     }
 
     template<class Ch>
@@ -243,7 +243,7 @@ namespace nsCmn
 
         size_t lenKeyword = detail::measure( keyword );
 
-        return detail::findFirstOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive  );
+        return detail::findFirstOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive );
     }
 
     template<class Ch>
@@ -252,7 +252,7 @@ namespace nsCmn
         size_t lenSrc = detail::measure( pSrc );
         size_t lenKeyword = detail::measure( keyword );
 
-        return detail::findFirstIndexOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive  );
+        return detail::findFirstIndexOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive );
     }
 
     template<class Ch>
@@ -260,7 +260,7 @@ namespace nsCmn
     {
         size_t lenKeyword = detail::measure( keyword );
 
-        return detail::findFirstIndexOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive  );
+        return detail::findFirstIndexOf( pSrc, lenSrc, keyword, lenKeyword, pos, case_sensitive );
     }
 
     inline ssize_t findFirstIndexOf( const std::string& src, const std::string& keyword, ssize_t pos = std::string::npos, bool case_sensitive = true )
@@ -362,6 +362,22 @@ namespace nsCmn
             return false;
 
         if( nsCmn::detail::compare( pSrc, lenKeyword, keyword, lenKeyword, case_sensitive) )
+            return true;
+
+        return false;
+    }
+
+    template<class Ch>
+    bool endWith( Ch* pSrc, size_t lenSrc, Ch* keyword, size_t lenKeyword, bool case_sensitive = true )
+    {
+        if( pSrc == NULL )
+            return false;
+
+        if( lenSrc < lenKeyword )
+            return false;
+
+        Ch* pSrcPos = pSrc+(lenSrc-lenKeyword);
+        if( nsCmn::detail::compare( pSrcPos, lenKeyword, keyword, lenKeyword, case_sensitive) )
             return true;
 
         return false;
@@ -559,17 +575,32 @@ namespace nsCmn
     }
 
     template<class Ch>
-    inline bool IsTrue( const Ch* value, size_t len = 0 )
+    inline bool IsTrue( const Ch* value, ssize_t len = -1 )
     {
         bool isTrue = false;
 
-        if( nsCmn::compare( value, len, "Y", 1, false)  )
+        if( len == 0 )
+            return isTrue;
+
+        size_t strLen = 0;
+
+        if( len < 0 )
+            strLen = nsCmn::detail::measure( value );
+        else
+            strLen = static_cast<std::size_t>( len );
+
+        if( strLen == 0 )
+            return isTrue;
+
+        if( nsCmn::compare( value, strLen, "Y", 1, false)  )
             isTrue = true;
-        else if( nsCmn::compare( value, len, "1", 1, false)  )
+        else if( nsCmn::compare( value, strLen, "1", 1, false)  )
             isTrue = true;
-        else if( nsCmn::compare( value, len, "T", 1, false)  )
+        else if( nsCmn::compare( value, strLen, "T", 1, false)  )
             isTrue = true;
-        else if( nsCmn::compare( value, len, "TRUE", 4, false)  )
+        else if( nsCmn::compare( value, strLen, "TRUE", 4, false)  )
+            isTrue = true;
+        else if( nsCmn::compare( value, strLen, "YES", 3, false)  )
             isTrue = true;
 
         return isTrue;
@@ -670,4 +701,4 @@ namespace nsCmn
 }
 
 
-#endif //AROUNDVIEW_CSTRMANAGER_H
+#endif //CSTRMANAGER_H
