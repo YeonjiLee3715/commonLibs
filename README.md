@@ -1,42 +1,32 @@
 # commonLibs
+Personal utility project.
 
-- 환경변수에 commonLibs의 경로를 commonLibs의 이름으로 등록 해 주어야 함.
-- makelist나 .pro 파일 등에서 COMMON_LIBS를 선언하여 사용 할 모듈을 지정해주어야 함
+## How to use
+- The path of commonLibs must be registered as the name of **commonLibs** in the environment variable.
+- The module to be used must be designated by declaring **COMMON_LIBS** in the **makelist** or **.pro** file.
 
-- cmake를 사용하는 프로젝트에서는 .mk파일을 include
-> 예시) Android.mk
-<pre>
-<code>
-...
+- Include the **commonLibs.mk** file if it's a cmake project
+> exp) Android.mk
+<pre><code>...
 COMMON_LIBS:= CBaseClass CCallbackMacro CLogger CStrManager CVideoCapture CVideoStreamer
 include $(commonLibs)\commonLibs.mk
-...
-</code>
-</pre>
+...</code></pre>
 
-- qt 프로젝트에서는 commonLibs.pri 파일을 include
-> 예시) temp.pro
-<pre>
-<code> 
->> ...
+- Include the **commonLibs.pri** file if it's a Qt project
+> exp) temp.pro
+<pre><code>...
 COMMON_LIBS = CLogger CStrManager
 win32:include($(COMMONLIBS)/commonLibs.pri)
 else:unix:include($(commonLibs)/commonLibs.pri)
-...
-</code>
-</pre>
+...</code></pre>
 
-- 프로젝트에 cmnDef.h 파일을 만들어 commonLibs에 필요한 정의를 해주어야 함.
-> 예시) cmnDef.h
-<pre>
-<code> 
-#ifndef CMNDEF_H
+- It is necessary to create a **cmnDef.h** file in the project and define the contents required for commonLibs.
+> exp) cmnDef.h
+<pre><code>#ifndef CMNDEF_H
 #define CMNDEF_H
 
-//common library용 정의파일
-#define __QT_DEBUG //QLOG 사용: QT프로젝트
+//Definition file for common library
+#define __QT_DEBUG // Using QLOG: Qt project
 #define LOG_LV       0//4//_INFO
 
-#endif // CMNDEF_H
-</code>
-</pre>
+#endif // CMNDEF_H</code></pre>
