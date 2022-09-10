@@ -50,15 +50,17 @@ void QVariantConverter::SetToMap(QVariantMap& mapParams, const std::string& key,
     mapParams[ QString::fromStdString( key ) ] = fValue;
 }
 
-void QVariantConverter::SetToMap(QVariantMap& mapParams, const std::string& key, const QList<int>& vecData)
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
+void QVariantConverter::SetToMap(QVariantMap& mapParams, const std::string& key, const QList<int>& lstData)
 {
     QVariantList lstVar;
 
-    for( QList<int>::const_iterator it = vecData.cbegin(); it != vecData.cend(); ++it )
+    for( QList<int>::const_iterator it = lstData.cbegin(); it != lstData.cend(); ++it )
         lstVar << (*it);
 
     mapParams[ QString::fromStdString( key ) ] = lstVar;
 }
+#endif
 
 void QVariantConverter::SetToMap(QVariantMap& mapParams, const std::string& key, const QVector<int>& vecData)
 {

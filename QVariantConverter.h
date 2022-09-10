@@ -1,6 +1,7 @@
 #ifndef QVARIANTCONVERTER_H
 #define QVARIANTCONVERTER_H
 
+#include <QtGlobal>
 #include <QObject>
 #include <string>
 #include <QVariant>
@@ -29,7 +30,9 @@ public:
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const long long& lldValue );
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const unsigned long long& ulldValue );
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const double& fValue );
+#if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const QList<int>& vecData );
+#endif
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const QVector<int>& vecData );
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const std::vector<int>& vecData );
     static void                         SetToMap(QVariantMap& mapParams, const std::string& key, const std::vector<std::string>& vecData );
