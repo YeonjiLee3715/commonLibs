@@ -26,6 +26,8 @@
 #define REGIST_MODULE_RESPONSE( RES_CODE, FUNCTION_NAME ) \
     insertFunctionToResCode( static_cast<int>( RES_CODE ), QString("Res")+#FUNCTION_NAME );
 
+class QThread;
+class QModuleManager;
 class QBaseModule : public QObject
 {
     Q_OBJECT
@@ -33,28 +35,46 @@ public:
     QBaseModule(QObject *parent = nullptr);
     virtual ~QBaseModule();
 
-    void setIsSet( bool isSet );
-    bool IsSet();
+private:
+    friend QThread;
+    friend QModuleManager;
 
-    void setCancelEvent( bool bCancelEvent );
-    bool CancelEvent();
+public:
+    typedef enum eInitMethod{INIT_MODULE_MANAGER = 0, INIT_MANUAL} eInitMethod;
 
-    void setStop( bool isStop );
-    bool IsStop();
+private:
+    void connectThreadSignals( QThread* pThModule );
+    void disconnectThreadSignals( QThread* pThModule );
 
+protected:
     void setIndependentModule( bool isIndependentModule );
-    bool IsIndependentModule();
+
+    /*! If the initialization of the independent module is done manually,
+     * the thread must also be run manually.*/
+    void setInitMethod( eInitMethod eInitMethod );
+    void setIsSet( bool isSet );
+    void setStop( bool isStop );
 
     void insertFunctionToReqCode(int reqCode, const QString& functionName );
-    QString getFunctionNameFromReqCode( int reqCode );
-
     void insertFunctionToResCode(int resCode, const QString& functionName );
+
+    QString getFunctionNameFromReqCode( int reqCode );
     QString getFunctionNameFromResCode( int resCode );
+
+public:
+    bool IsSet();
+    eInitMethod InitMethod();
+    bool IsIndependentModule();
+    bool IsStop();
+    bool IsStopped();
 
 signals:
 
 public:
     virtual void init();
+
+private slots:
+    void moduleStopped();
 
 public slots:
     virtual void doRun() = 0;
@@ -66,9 +86,10 @@ public slots:
 
 private:
     bool m_isSet;
-    bool m_bCancelEvent;
     bool m_isStop;
+    bool m_isStopped;
 
+    eInitMethod m_eInitMethod;
     bool m_isIndependentModule;
 
     QHash< int, QString > m_mapReqCodeToFuncName;

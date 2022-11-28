@@ -10,7 +10,8 @@ namespace nsQBaseModule{
 using namespace nsQBaseModule;
 
 QBaseModule::QBaseModule( QObject *parent )
-: QObject( parent ), m_isSet( false ), m_isStop( false ), m_isIndependentModule( false )
+: QObject( parent ), m_isSet(false), m_isStop(false), m_isStopped(false), m_eInitMethod(INIT_MODULE_MANAGER)
+, m_isIndependentModule(false)
 {
 
 }
@@ -31,14 +32,9 @@ bool QBaseModule::IsSet()
     return m_isSet;
 }
 
-void QBaseModule::setCancelEvent(bool bCancelEvent)
+QBaseModule::eInitMethod QBaseModule::InitMethod()
 {
-    m_bCancelEvent = bCancelEvent;
-}
-
-bool QBaseModule::CancelEvent()
-{
-    return m_bCancelEvent;
+    return m_eInitMethod;
 }
 
 void QBaseModule::setStop(bool isStop)
@@ -46,14 +42,43 @@ void QBaseModule::setStop(bool isStop)
     m_isStop = isStop;
 }
 
+void QBaseModule::moduleStopped()
+{
+    if( m_isStop == false )
+        stopModule();
+    m_isStopped = true;
+}
+
 bool QBaseModule::IsStop()
 {
     return m_isStop;
 }
 
+bool QBaseModule::IsStopped()
+{
+    return m_isStopped;
+}
+
 void QBaseModule::setIndependentModule(bool isIndependentModule)
 {
     m_isIndependentModule = isIndependentModule;
+}
+
+void QBaseModule::setInitMethod(eInitMethod eInitMethod)
+{
+    m_eInitMethod = eInitMethod;
+}
+
+void QBaseModule::connectThreadSignals(QThread *pThModule)
+{
+    connect( pThModule, SIGNAL( started() ), this, SLOT( doRun() ), Qt::DirectConnection );
+    connect( pThModule, SIGNAL( finished() ), this, SLOT( moduleStopped() ), Qt::DirectConnection );
+}
+
+void QBaseModule::disconnectThreadSignals(QThread *pThModule)
+{
+    disconnect( pThModule, SIGNAL( started() ), this, SLOT( doRun() ) );
+    disconnect( pThModule, SIGNAL( finished() ), this, SLOT( moduleStopped() ) );
 }
 
 bool QBaseModule::IsIndependentModule()
@@ -96,13 +121,6 @@ void QBaseModule::getRequest(int reqCode, int sender, bool response, QVariantMap
 {
     if( IsSet() == false || IsStop() )
         return;
-
-    if( CancelEvent() )
-    {
-        LOGI( TAG, "Event - reqCode: %d, sender: %d has been canceled.", reqCode, sender );
-
-        return;
-    }
 
     QString functionName = getFunctionNameFromReqCode( reqCode );
     if( functionName.isEmpty() )
