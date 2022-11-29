@@ -17,11 +17,11 @@ CEventQueue::~CEventQueue(){
 
 }
 
-unsigned int CEventQueue::push(unsigned int event, void* params, unsigned int senderId){
+uint32_t CEventQueue::push(uint32_t event, void* params, uint32_t senderId){
     return push([&](CEventQueueItem*& newItem)->bool{
                     srand(time(0));
                     newItem = new CEventQueueItem(CEventItem(event
-                                                , rand()+1/*todo: verification*/
+                                                , (uint32_t)rand()+1/*todo: verification*/
                                                 , params, senderId));
                     return true;
                 });

@@ -14,35 +14,15 @@
 #include <cassert>
 #include <limits>
 
-#ifndef CACHE_ALIGN
-// Check windows
-#if _WIN32 || _WIN64
-#if _WIN64
-#define CACHE_ALIGN 64
-#else
-#define CACHE_ALIGN 32
-#endif //end _WIN64
-#endif //end _WIN32 || _WIN64
-
-// Check GCC
-#if __GNUC__
-#if __x86_64__ || __ppc64__
-#define CACHE_ALIGN 64
-#else
-#define CACHE_ALIGN 32
-#endif //end __GNUC__
-#endif //end __x86_64__ || __ppc64__
-#endif //end ifndef CACHE_ALIGN
-
 typedef struct CEventItem{
-    unsigned int event; //< Event ID
-    unsigned int id;    //< A unique number generated when registering in the event queue
+    uint32_t event;     //< Event ID
+    uint32_t id;        //< A unique number generated when registering in the event queue
     void* params;
 
-    int senderId;       //< ID?
+    uint32_t senderId;  //< ID?
 
     CEventItem():event(0), id(0), params(nullptr), senderId(0){}
-    CEventItem(unsigned int _event, unsigned int _id, void* _params = nullptr, int _senderId = 0)
+    CEventItem(uint32_t _event, uint32_t _id, void* _params = nullptr, uint32_t _senderId = 0)
         : event(_event), id(_id), params(_params), senderId(_senderId){}
 }CEventItem;
 
@@ -64,7 +44,7 @@ public:
     explicit CEventQueue();
     ~CEventQueue();
 
-    unsigned int push(unsigned int event, void* params = nullptr, unsigned int senderId = 0);
+    uint32_t push(uint32_t event, void* params = nullptr, uint32_t senderId = 0);
     bool front(CEventItem& out_item) const;
     bool back(CEventItem& out_item) const;
     bool at(size_t pos, CEventItem& out_item) const;
@@ -79,7 +59,7 @@ private:
     /* writer() can return false, which indicates that the caller
        of push() changed its mind while writing (e.g. ran out of bytes)*/
     template <typename F>
-    unsigned int push(const F& writer){
+    uint32_t push(const F& writer){
         CEventQueueItem* newItem = nullptr;
 
         if( writer(newItem) ){
